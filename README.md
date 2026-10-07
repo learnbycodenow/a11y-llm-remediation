@@ -5,7 +5,7 @@ violations (axe-core via Playwright), applies fixes, and re-scans to measure the
 effect. Results describe **scanner-detected violations only**. They say nothing
 about whether an app is compliant or accessible.
 
-Status: Phase 1 (scan only). See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md)
+Status: Phase 2 (scan, classify, map). See [docs/PROJECT_BRIEF.md](docs/PROJECT_BRIEF.md)
 for the full plan and [PROMPTS.md](PROMPTS.md) for the phases.
 
 ## Install
@@ -57,6 +57,27 @@ and writes:
 
 The same run printed to the console is your baseline.
 
+## Classify and map
+
+Both commands read and update `out/violations.json` and print a summary of counts
+by category and by mapping confidence.
+
+```bash
+npm run a11y -- classify --config a11y.config.yaml
+npm run a11y -- map --config a11y.config.yaml
+```
+
+- `classify` tags each violation `rule_fixable`, `needs_judgment`, or `layout`
+  using [data/rule-categories.json](data/rule-categories.json). Unknown rules
+  default to `needs_judgment`. Edit that file to change a rule's category.
+- `map` finds the most likely Angular template file and line (paths are relative
+  to `target.path`) and sets `mappingConfidence` to `high`, `medium`, `low`, or
+  `none`. The `notes` field says why, and ambiguous cases list every candidate in
+  `sourceCandidates` instead of picking silently. Re-run `scan` first if your
+  `violations.json` predates Phase 2, so each node carries its component chain.
+
+How the mapper decides is described in [docs/DECISIONS.md](docs/DECISIONS.md).
+
 ## Test
 
 ```bash
@@ -66,9 +87,11 @@ npm test
 
 Unit tests use fixtures and need neither a browser nor a running app.
 
-## Limitations (Phase 1)
+## Limitations
 
-- Scanning only; no fixes are made yet.
+- Scanning, classification, and mapping only; no fixes are made yet.
+- A mapped location is a best guess from static matching, with a stated
+  confidence. It is not proof that the template produced the node.
 - Violation ids hash the rule, route, and CSS selector. Selectors can change
   when the DOM changes, which matters for later before/after comparison.
 - Axe finds only a subset of accessibility problems. Passing a scan does not

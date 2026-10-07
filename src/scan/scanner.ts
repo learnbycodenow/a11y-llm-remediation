@@ -35,10 +35,38 @@ async function scanRoute(page: Page, config: Config, route: string): Promise<Sca
   if (config.scan.tags.length > 0) builder = builder.withTags(config.scan.tags);
   const results = await builder.analyze();
 
-  return {
-    violations: normalizeAxeViolations(route, results.violations),
-    axeVersion: results.testEngine.version ?? null,
-  };
+  const violations = normalizeAxeViolations(route, results.violations);
+  await attachHostChains(page, violations);
+  return { violations, axeVersion: results.testEngine.version ?? null };
+}
+
+/** Records each failing node's custom-element ancestors so the map stage can find the owning component. */
+async function attachHostChains(page: Page, violations: Violation[]): Promise<void> {
+  // Shadow DOM and iframe selectors cannot be resolved with a single querySelector.
+  const selectors = violations.map((v) => (v.selector.includes(' >> ') ? null : v.selector));
+  const chains = await page.evaluate((sels) => {
+    return sels.map((sel) => {
+      if (sel === null) return null;
+      let el: Element | null;
+      try {
+        el = document.querySelector(sel);
+      } catch {
+        return null; // selector the browser cannot parse; leave the chain unknown
+      }
+      if (!el) return null;
+      const chain: string[] = [];
+      for (let p = el.parentElement; p; p = p.parentElement) {
+        const tag = p.tagName.toLowerCase();
+        if (tag.includes('-')) chain.push(tag);
+      }
+      return chain;
+    });
+  }, selectors);
+
+  violations.forEach((v, i) => {
+    const chain = chains[i];
+    if (chain) v.hostChain = chain;
+  });
 }
 
 export async function scanRoutes(

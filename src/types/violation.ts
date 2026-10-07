@@ -20,6 +20,15 @@ export interface Violation {
   mappingConfidence: MappingConfidence | null;
   status: Status;
   notes: string[];
+  /** Custom-element ancestors of the failing node, nearest first. Captured at scan time; absent in older files. */
+  hostChain?: string[];
+  /** Other template locations that matched as well as the best guess; set by the map stage when ambiguous. */
+  sourceCandidates?: SourceLocation[];
+}
+
+export interface SourceLocation {
+  file: string;
+  line: number;
 }
 
 export interface ViolationsFile {

@@ -19,15 +19,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@angular/compiler": "^21.2.25",
     "@axe-core/playwright": "^4.13.0",
     "commander": "^15.0.0",
     "playwright": "^1.63.0",
+    "typescript": "~5.9",
     "yaml": "^2.9.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
-    "typescript": "^7.0.2",
     "vitest": "^5.0.3"
   }
 }
