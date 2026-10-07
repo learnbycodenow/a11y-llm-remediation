@@ -1,0 +1,5 @@
+target:
+  path: ./app
+  baseUrl: http://localhost:4200
+routes:
+  - /

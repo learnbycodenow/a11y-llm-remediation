@@ -1,0 +1,31 @@
+target:
+  path: ../angular-realworld-example-app   # local clone of the target app
+  startCommand: npm start                  # optional; omit if the app is already running
+  baseUrl: http://localhost:4200
+  readyPath: /
+  readyTimeoutMs: 120000
+routes:
+  - /
+  - /login
+  - /register
+auth:                                      # optional
+  loginRoute: /login
+  steps:
+    - fill: { selector: "input[type=email]", valueEnv: A11Y_TEST_EMAIL }
+    - fill: { selector: "input[type=password]", valueEnv: A11Y_TEST_PASSWORD }
+    - click: { selector: "button[type=submit]" }
+scan:                                      # optional
+  tags: []                                 # axe tags, e.g. [wcag2a, wcag2aa]; empty = axe defaults
+mode: rules-only                           # rules-only | rules+llm
+llm:                                       # only used when mode is rules+llm
+  provider: openai-compatible              # any supported provider; user's choice
+  model: ""                                # required for rules+llm; never hardcoded
+  baseUrl: ""                              # optional, for local or alternative endpoints
+  apiKeyEnv: LLM_API_KEY                   # name of the env var holding your key
+  # pricing:                               # optional; omit if unknown or local model
+  #   inputPerMTokUsd: 0
+  #   outputPerMTokUsd: 0
+  maxViolations: 25
+  budgetUsd: 2.00
+output:
+  dir: ./out

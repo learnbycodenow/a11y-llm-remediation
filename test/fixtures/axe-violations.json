@@ -1,0 +1,37 @@
+[
+  {
+    "id": "button-name",
+    "impact": "critical",
+    "tags": ["cat.name-role-value", "wcag2a", "wcag412"],
+    "nodes": [
+      { "html": "<button class=\"icon\"></button>", "target": ["app-header .icon"], "impact": "critical" },
+      { "html": "<button></button>", "target": ["app-footer button"], "impact": "critical" }
+    ]
+  },
+  {
+    "id": "image-alt",
+    "impact": "critical",
+    "tags": ["wcag2a", "wcag111"],
+    "nodes": [
+      { "html": "<img src=\"a.png\">", "target": ["img:nth-child(2)"] }
+    ]
+  },
+  {
+    "id": "color-contrast",
+    "impact": "serious",
+    "tags": ["wcag2aa", "wcag143"],
+    "nodes": [
+      { "html": "<p>low</p>", "target": [["my-widget", "p"]] },
+      { "html": "<p>frame</p>", "target": ["iframe#f", "p"] }
+    ]
+  },
+  {
+    "id": "custom-rule",
+    "impact": "weird",
+    "tags": [],
+    "nodes": [
+      { "html": "<div></div>", "target": ["div"] },
+      { "html": "<div></div>", "target": ["div"] }
+    ]
+  }
+]

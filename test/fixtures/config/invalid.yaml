@@ -1,0 +1,7 @@
+target:
+  path: ./app
+  baseUrl: not-a-url
+  extra: true
+routes:
+  - login
+mode: rules+llm
